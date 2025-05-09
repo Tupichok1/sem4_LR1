@@ -1,4 +1,5 @@
 <template>
+  {{ this.wow }}
   <section class = "homePage">
     <div class = "container-fluid" style = "margin-top: 50px; margin-bottom: 100px; border-bottom: 6px solid #eee; padding-bottom: 5px;">
       <div class="row text-center">
@@ -14,32 +15,54 @@
         </div>
       </div>
     </div>
-    <div class = "container">
-      <div class = "row text-start">
+    <div class = "container-fluid">
+      <div class = "row text-center">
         <h1 class = "col-xl-6">
-          <b>Какие бывают кибератаки</b>
+          <b>Мониторинг инцидентов сайта</b>
         </h1>
       </div>
     </div>
-    <div v-for="Attack in Attacks" style = "margin-top: 30px">
-      <div class = "container">
-        <div class = "row">
+    <div class = "container-fluid" style = "margin-top: 30px; margin-left: 10px;">
+      <div class = "row text-center" style = "text-decoration: none; color: inherit; font-size: 2em; border-bottom: 6px solid #eee; padding-bottom: 5px;">
+        <div class = "col-xl-4">
+          Название инцидента
+        </div>
+        <div class = "col-xl-2">
+          Дата инцидента
+        </div>
+        <div class = "col-xl-3">
+          Источник инцидента
+        </div>
+        <div class = "col-xl-3">
+          Название атаки
+        </div>
+      </div>
+    </div>
+    <div v-for="Incident in Incidents" style = "margin-top: 30px">
+      <div class = "container-fluid">
+        <div class = "row text-center" style = "text-decoration: none; color: inherit; font-size: 2em; border-bottom: 6px solid #eee; padding-bottom: 5px; ">
           <div class = "col-xl-4">
-            <router-link class = "text-start" style = "text-decoration: none; color: inherit; font-size: 2em; " :to="{ path: '/detail/' + Attack.id}">
-              <b>{{ Attack.nameOfAttack }}</b>
+            <router-link class = "text-center" style = "text-decoration: none; color: inherit; " :to="{ path: '/detail/' + Incident.id}">
+              {{ Incident.nameOfIncident }}
             </router-link>
           </div>
-        </div>
-        <div class = "row">
-          <h3 class = "col-xl-9 text-start" style = "margin-left: 2px;">{{ Attack.ShortDescription }}</h3>
+          <div class = "col-xl-2">
+            {{ Incident.Date }}
+          </div>
+          <div class = "col-xl-3">
+            {{ Incident.Source }}
+          </div>
+          <div class = "col-xl-3">
+            {{ Incident.Attack }}
+          </div>
         </div>
       </div>
     </div>
     <div class = "container-fluid">
       <div class = "row text-center">
-        <div class = "col-xl-9 text-end" style = "margin-top: 20px;">
+        <div class = "col-xl-12 text-end" style = "margin-top: 40px;">
           <div v-if="token">
-            <button type = "submit" @click="toAdd()" class = "btn btn-primary fw-bold text-uppercase" style = "width: 100px; margin-left: 30px;">+ ADD</button>
+            <button type = "submit" @click="toAdd()" class = "btn btn-primary fw-bold text-uppercase" style = "width: 100px; margin-right: 20px">+ ADD</button>
           </div>
         </div>
       </div>
@@ -59,7 +82,8 @@ import router from '../Router';
         token: null,
         info: null,
         ER: null,
-        Attacks: null,
+        Incidents: null,
+        wow: null
       }
     },
 
@@ -109,7 +133,7 @@ import router from '../Router';
       this.login = localStorage.getItem('login');
 
       await axios.get('http://localhost:8000/api/home',
-        ).then(response => (this.Attacks = response.data)).catch(error => (this.ER = error.response.data))
+        ).then(response => (this.Incidents = response.data)).catch(error => (this.ER = error.response.data))
 
       await axios.get('http://localhost:8000/api/takeToken', {
         headers: {

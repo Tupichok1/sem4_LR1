@@ -1,9 +1,5 @@
 <template>
-    <router-link :to="{ path: '/'}">
-        <svg xmlns="http://www.w3.org/2000/svg" style= "position: absolute; top: 20px; left: 20px" width="35" height="35" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
-            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"/>
-        </svg>
-    </router-link>
+    <goHome></goHome>
     <div class = "container-fluid">
         <div class = "row">
             <div class = "col-xl-9 text-start" style = "margin-top: 60px; margin-left: 100px">
@@ -14,11 +10,26 @@
         </div>
         <div class = "row">
             <div class = "col-xl-9" style = "margin-top: 20px; margin-left: 60px">
-                <textarea class="form-control" v-model="nameOfAttack" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите название атаки">{{ this.nameOfAttack }}</textarea>
-                <textarea class="form-control" v-model="Description" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите описание атаки">{{ this.Description }}</textarea>
-                <textarea class="form-control" v-model="ShortDescription" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите короткое описание атаки">{{ this.ShortDescription }}</textarea>
+                <textarea class="form-control" v-model="nameOfIncident" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите название инцидента">{{ this.nameOfIncident }}</textarea>
+                <textarea class="form-control" v-model="Description" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите описание инцидента">{{ this.Description }}</textarea>
+                <textarea class="form-control" v-model="Source" id="textAreaExample1" rows="4" style = "width: 500px;" placeholder="Введите источник инцидента">{{ this.Source }}</textarea>
             </div>
-            <div class = "col-xl-4 text-end" style = "margin-top: 20px; margin-left: 10px">
+            <div class="col-xl-6 dropdown" style = "margin-left: 105px; margin-top: 20px">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ this.Status }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <div v-if="Status == 'Исчерпан'">
+                        <li><a class="dropdown-item" @click="Status='В процессе решения'" href="#">В процессе решения</a></li>
+                    </div>
+                    <div v-if="Status == 'В процессе решения'">
+                        <li><a class="dropdown-item" @click="Status='Исчерпан'" href="#">Исчерпан</a></li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        <div class = "row">
+            <div class = "col-xl-6 text-start" style = "margin-top: 20px; margin-left: 105px">
                 <button type = "submit" @click="editAttack()" class = "btn btn-primary fw-bold text-uppercase" style = "width: 100px; margin-top: 25px;">edit</button>
             </div>
         </div>
@@ -29,16 +40,22 @@
 </template>
 
 <script>
+import goHome from "./goHome.vue"
 import router from "../Router.js"
 import axios from "axios";
   export default {
     name: "auth",
+    components: {
+      goHome
+    },
 
     data() {
       return {
-        nameOfAttack: null,
+        nameOfIncident: null,
         Description: null,
-        ShortDescription: null,
+        Source: null,
+        Status: null,
+        Attack: null,
         ER: null,
       }
     },
@@ -48,10 +65,11 @@ import axios from "axios";
         async editAttack() {
 
             await axios.put('http://localhost:8000/api/updateNote/' + this.$route.params.id, {
-                nameOfAttack: this.nameOfAttack,
+                nameOfIncident: this.nameOfIncident,
                 Description: this.Description,
-                ShortDescription: this.ShortDescription,
-                Author: localStorage.getItem('login')
+                Source: this.Source,
+                Status: this.Status,
+                Attack: this.Attack,
             }, {
             headers: {
                 Authorization: "Token " + localStorage.getItem('token'),
@@ -84,9 +102,11 @@ import axios from "axios";
             router.push('/404');
         }
 
-        this.nameOfAttack = this.info.nameOfAttack;
+        this.nameOfIncident = this.info.nameOfIncident;
         this.Description = this.info.Description;
-        this.ShortDescription = this.info.ShortDescription;
+        this.Source = this.info.Source;
+        this.Attack = this.info.Attack;
+        this.Status = this.info.Status;
         
         return;
     },

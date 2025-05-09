@@ -15,6 +15,7 @@ const routes = [
   { path: '/edit/:id', component: edit, name: "editView" }, 
   { path: '/', component: mainPage, name: 'home' },
   { path: '/404', component: NotFound, name: 'error' },
+  { path: '/:catchAll(.*)', redirect: '/404' },
 ]
 
 const router = createRouter({
